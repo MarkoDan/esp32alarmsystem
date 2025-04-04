@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ESP32 Sensor Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 5px;
+    }
+    #latestBox {
+      padding: 15px;
+      border: 2px solid #ccc;
+      background-color: #f9f9f9;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 ESP32 Sensor Dashboard</h1>
+
+  <button onclick="loadData()">Load Full History</button>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Timestamp</th>
+        <th>Distance (cm)</th>
+        <th>Temperature (°C)</th>
+        <th>Humidity (%)</th>
+        <th>Alarm</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+
+    function clearTable() {
+      document.querySelector("#dataTable tbody").innerHTML = "";
+    }
+
+    function populateTable(data) {
+      const tbody = document.querySelector("#dataTable tbody");
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.id}</td>
+          <td>${row.timestamp}</td>
+          <td>${row.distance}</td>
+          <td>${row.temperature}</td>
+          <td>${row.humidity}</td>
+          <td>${row.alarm_triggered ? "⚠️" : ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadData() {
+      clearTable();
+      fetch(`${API_BASE}/data`)
+        .then(res => res.json())
+        .then(data => populateTable(data))
+        .catch(err => alert("Error loading data: " + err));
+    }
+
+    function updateLatestReading() {
+      fetch(`${API_BASE}/latest`)
+        .then(res => res.json())
+        .then(data => {
+          const output = `
+            Time: ${data.timestamp} |
+            Distance: ${data.distance} cm |
+            Temperature: ${data.temperature} °C |
+            Humidity: ${data.humidity} % |
+            Alarm: ${data.alarm_triggered ? "⚠️ TRIGGERED" : "✅ Normal"}
+          `;
+          document.getElementById("latestText").textContent = output;
+        })
+        .catch(err => {
+          document.getElementById("latestText").textContent = "Error loading latest data.";
+        });
+    }
+
+    // Auto-refresh every 5 seconds
+    updateLatestReading(); // initial load
+    setInterval(updateLatestReading, 5000);
+  </script>
+
+</body>
+</html>

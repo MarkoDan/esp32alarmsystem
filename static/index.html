@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Sensor Status</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+      text-align: center;
+    }
+
+    nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 18px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      margin-top: 60px;
+    }
+
+    .reading {
+      font-size: 2em;
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .alarm-on {
+      color: red;
+      font-weight: bold;
+    }
+
+    .alarm-off {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/history">History Data</a>
+    <a href="http://localhost:5000/export">⬇ Export CSV</a>
+    <a href="/alarm">Alarm Data</a>
+  </nav>
+
+  <h1>🚨 Proximity Alarm System</h1>
+
+  <div class="reading" id="distance">Distance from closest person: ...</div>
+  <div class="reading" id="temperature">Temperature: ...</div>
+  <div class="reading" id="humidity">Humidity: ...</div>
+  <div class="reading" id="alarm">Status: ...</div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/latest';
+
+    function updateReading() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('distance').textContent = `Distance from closest person: ${data.distance} cm`;
+          document.getElementById('temperature').textContent = `Room Temperature: ${data.temperature} °C`;
+          document.getElementById('humidity').textContent = `Humidity Level: ${data.humidity} %`;
+          document.getElementById('alarm').innerHTML = data.alarm_triggered
+            ? '<span class="alarm-on">🚨 Alarm Triggered!</span>'
+            : '<span class="alarm-off">✅ Area is Clear</span>';
+        })
+        .catch(() => {
+          document.getElementById('alarm').innerHTML = '<span class="alarm-on">⚠️ Connection Error</span>';
+        });
+    }
+
+    updateReading();
+    setInterval(updateReading, 1000);
+  </script>
+
+</body>
+</html>

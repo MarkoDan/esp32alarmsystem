@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alarm History</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background-color: #f7f7f7;
+    }
+
+    nav {
+      background-color: #333;
+      padding: 10px;
+      margin: -20px -20px 20px -20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 18px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 15px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Live Status</a>
+    <a href="history.html">History Data</a>
+    <a href="alarm.html">Alarm History</a>
+    <a href="http://localhost:5000/export">⬇ Export CSV</a>
+  </nav>
+
+  <h1>🚨 Alarm History</h1>
+
+  <table id="alarmTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Timestamp</th>
+        <th>Distance (cm)</th>
+        <th>Temperature (°C)</th>
+        <th>Humidity (%)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:5000/alarm-data";
+
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#alarmTable tbody");
+        data.forEach(entry => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${entry.id}</td>
+            <td>${entry.timestamp}</td>
+            <td>${entry.distance}</td>
+            <td>${entry.temperature}</td>
+            <td>${entry.humidity}</td>
+            <td>🚨 Triggered</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        alert("Failed to load alarm data: " + err);
+      });
+  </script>
+
+</body>
+</html>
