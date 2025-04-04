@@ -10,7 +10,7 @@ const char* ssid = "ALHN-179D";
 const char* password = "qkDUaRAJj6";
 
 // MQTT configuration
-const char* mqtt_server = "192.168.1.69";
+const char* mqtt_server = "locahost";
 const int mqtt_port = 1883;
 const char* mqtt_topic = "esp32/alarm";
 

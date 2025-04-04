@@ -4,7 +4,7 @@ import time
 import paho.mqtt.client as mqtt
 
 # === MQTT Config ===
-MQTT_BROKER = "192.168.1.69"
+MQTT_BROKER = "locahost"
 MQTT_PORT = 1883
 MQTT_TOPIC = "esp32/alarm"
 
