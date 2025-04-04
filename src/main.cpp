@@ -6,8 +6,8 @@
 #include <SPIFFS.h>
 
 // WiFi credentials
-const char* ssid = "ALHN-179D";
-const char* password = "qkDUaRAJj6";
+const char* ssid = "*******";
+const char* password = "******";
 
 // MQTT configuration
 const char* mqtt_server = "locahost";
